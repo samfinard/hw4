@@ -2,17 +2,15 @@ import java.util.*;
 
 public class TFIDF {
 
-    private List<String> documents;
+    private List<docLabel> documents;
     private List<String> conceptWords;
     private Map<String, Map<String, Integer>> tf;
     private Map<String, Double> idf;
     private Map<String, Map<String, Double>> tfidfMatrix;
-    private boolean logAddOne;
 
-    public TFIDF(List<String> documents, boolean logAddOne) {
+    public TFIDF(List<docLabel> documents, boolean logAddOne) {
         this.documents = documents;
         this.conceptWords = createConceptWords(documents);
-        this.logAddOne = logAddOne;
         this.tf = new HashMap<>();
         this.idf = new HashMap<>();
         this.tfidfMatrix = new HashMap<>();
@@ -26,7 +24,7 @@ public class TFIDF {
 
         // Calculate term frequency and document frequency
         for (int i = 0; i < docCount; i++) {
-            String[] words = documents.get(i).split(" ");
+            String[] words = documents.get(i).doc.split(" ");
             Map<String, Integer> wordFreq = new HashMap<>();
             for (String word : words) {
                 if (conceptWords.contains(word)) {
@@ -81,18 +79,25 @@ public class TFIDF {
         }
     }
 
-    private List<String> createConceptWords(List<String> documents) {
+    private List<String> createConceptWords(List<docLabel> docs) {
         Set<String> uniqueWords = new HashSet<>();
-        for (String doc : documents) {
-            uniqueWords.addAll(Arrays.asList(doc.split(" ")));
+        for (var doc : docs) {
+            uniqueWords.addAll(Arrays.asList(doc.doc.split(" ")));
         }
         return new ArrayList<>(uniqueWords);
     }
+    public List<Double> getVector (String doc) {
+        List<Double> vector = new ArrayList<>();
+        for (String word : conceptWords) {
+            vector.add(calculateTFIDF(doc, word));
+        }
+        return vector;
+    }
     public static void main(String[] args){
-        List<String> documents = new ArrayList<>();
-        documents.add("a c c");
-        documents.add("a b b b b");
-        documents.add("a a d d d d");
+        List<docLabel> documents = new ArrayList<>();
+        documents.add(new docLabel("a b c", "a"));
+        documents.add(new docLabel("a b c", "b"));
+        
 
         List<String> conceptWords = new ArrayList<>();
         conceptWords.add("a");

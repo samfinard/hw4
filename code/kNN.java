@@ -1,50 +1,52 @@
 import java.util.*;
 
 public class kNN {
-    private final Map<String, Map<String, Double>> tfidfMatrix;
-    private final Map<String, String> documents;
-    
-    public kNN(Map<String, Map<String, Double>> tfidfMatrix, Map<String, String> documents) {
-        this.tfidfMatrix = tfidfMatrix;
-        this.documents = documents;
-    }
+    private TFIDFnew tfidfMatrix;
+    private List<docLabel> docLabels;
+    boolean logAddOne;
 
-    public String classifyDocument(String documentContent, int k, String distanceMetric) {
-        List<Map.Entry<String, Double>> distances = new ArrayList<>();
-        Map<String, Integer> labelCounts = new HashMap<>();
-        // Calculate the distance from the given document to all others
-        for (String otherDocument : documents.keySet()) {
+    public kNN(List<docLabel> docs,boolean logAddOne) {
+        this.docLabels = docs;
+        this.tfidfMatrix = new TFIDFnew(docs, logAddOne);
+        this.logAddOne = logAddOne;
+    }
+    public String classifyDocument(String unknownDoc, int k, String distanceMetric) { // e c    n
+        List<docLabel> docDist = new ArrayList<>();
+        // calculate distance from unknownDoc to all others
+        for (docLabel doc : docLabels) {
             double distance;
             if (distanceMetric.equalsIgnoreCase("ncd")) {
-                distance = similarity.NCD(documentContent, documents.get(otherDocument));
+                distance = similarity.NCD(unknownDoc, doc.doc);
             } else {
-                Map<String, Double> documentVector = tfidfMatrix.get(documentContent);
-                Map<String, Double> otherDocumentVector = tfidfMatrix.get(otherDocument);
+                var unknownDocVector = tfidfMatrix.getVector(unknownDoc, logAddOne);
+                var otherDocVector = tfidfMatrix.getVector(doc.doc, logAddOne);
 
-                double[] docVectorArray = documentVector.values().stream().mapToDouble(Double::doubleValue).toArray();
-                double[] otherDocVectorArray = otherDocumentVector.values().stream().mapToDouble(Double::doubleValue).toArray();
-
-                if (distanceMetric.equalsIgnoreCase("cosine")) {
-                    distance = similarity.cosineSim(docVectorArray, otherDocVectorArray);
+                if (distanceMetric.equalsIgnoreCase("cos")) {
+                    distance = similarity.cosineSim(unknownDocVector, otherDocVector);
                 } else { // Default to Euclidean distance
-                    distance = similarity.euclideanDist(docVectorArray, otherDocVectorArray);
+                    distance = similarity.euclideanDist(unknownDocVector, otherDocVector);
                 }
             }
+            docDist.add(new docLabel(doc.doc, doc.label, distance));
+        }
+        // sort the distances and keep the top k
+        Collections.sort(docDist, (a, b) -> Double.compare(b.distance, a.distance));
+        var topKDocs = docDist.subList(0, k);
 
-            distances.add(new AbstractMap.SimpleEntry<>(otherDocument, distance));
+        // count the labels and return the most frequent one
+        Map<String, Integer> labelFrequency = new HashMap<>();
+        for (docLabel doc : topKDocs) {
+            labelFrequency.put(doc.label, labelFrequency.getOrDefault(doc.label, 0) + 1);
         }
 
-        // Sort the distances and select the top k
-        distances.sort(Map.Entry.comparingByValue());
-        List<Map.Entry<String, Double>> nearestNeighbors = distances.subList(0, k);
-
-        // Classify the document based on the class of the majority of the k closest neighbors
-        for (Map.Entry<String, Double> entry : nearestNeighbors) {
-            String label = labels.get(entry.getKey());
-            labelCounts.put(label, labelCounts.getOrDefault(label, 0) + 1);
+        // Find the label with the highest frequency
+        Map.Entry<String, Integer> mostFreq = null;
+        for (Map.Entry<String, Integer> entry : labelFrequency.entrySet()) {
+            if (mostFreq == null || entry.getValue() > mostFreq.getValue()) {
+                mostFreq = entry;
+            }
         }
-        return Collections.max(labelCounts.entrySet(), Map.Entry.comparingByValue()).getKey();
-
+        return mostFreq.getKey();
     }
 
 }
