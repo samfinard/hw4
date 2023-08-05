@@ -32,16 +32,27 @@ public class runner {
     public static List<docLabel> testReadDocsFromFolder(String folderPath) {
         List<docLabel> documents = new ArrayList<>();
         Map<String, String> filenameToLabel = new HashMap<>();
-        filenameToLabel.put("unknown01.txt", "C1");
-        filenameToLabel.put("unknown02.txt", "C1");
-        filenameToLabel.put("unknown03.txt", "C1");
-        filenameToLabel.put("unknown04.txt", "C1");
-        filenameToLabel.put("unknown05.txt", "C4");
-        filenameToLabel.put("unknown06.txt", "C4");
-        filenameToLabel.put("unknown07.txt", "C7");
-        filenameToLabel.put("unknown08.txt", "C7");
-        filenameToLabel.put("unknown09.txt", "C1");
-        filenameToLabel.put("unknown10.txt", "C4");
+        // filenameToLabel.put("unknown01.txt", "C1");
+        // filenameToLabel.put("unknown02.txt", "C1");
+        // filenameToLabel.put("unknown03.txt", "C1");
+        // filenameToLabel.put("unknown04.txt", "C1");
+        // filenameToLabel.put("unknown05.txt", "C4");
+        // filenameToLabel.put("unknown06.txt", "C4");
+        // filenameToLabel.put("unknown07.txt", "C7");
+        // filenameToLabel.put("unknown08.txt", "C7");
+        // filenameToLabel.put("unknown09.txt", "C1");
+        // filenameToLabel.put("unknown10.txt", "C4");
+
+        filenameToLabel.put("processed01.txt", "C1");
+        filenameToLabel.put("processed02.txt", "C1");
+        filenameToLabel.put("processed03.txt", "C1");
+        filenameToLabel.put("processed04.txt", "C1");
+        filenameToLabel.put("processed05.txt", "C4");
+        filenameToLabel.put("processed06.txt", "C4");
+        filenameToLabel.put("processed07.txt", "C7");
+        filenameToLabel.put("processed08.txt", "C7");
+        filenameToLabel.put("processed09.txt", "C1");
+        filenameToLabel.put("processed10.txt", "C4");
         for (Map.Entry<String, String> entry : filenameToLabel.entrySet()) {
             String filename = entry.getKey();
             String label = entry.getValue();
@@ -108,16 +119,16 @@ public class runner {
         return res;
     }
     public static void main(String[] args) {
-        List<docLabel> documents = testReadDocsFromFolder("../data/input");
-
+        // List<docLabel> documents = testReadDocsFromFolder("../data/input");
+        List<docLabel> documents = readDocumentsFromFolder("../data/processed");
         boolean logAddOne = true;
-        String distanceMetric = ""; // "cos" for cosine, "ncd" for normalized compression distance, anything else for euclid
+        String distanceMetric = "cos"; // "cos" for cosine, "ncd" for normalized compression distance, anything else for euclid
         int k = 1; // must be < 10
         kNN kNN = new kNN(documents, logAddOne);
         
-        // String test_document = "Hoof and Mouth Disease is a deadly disease. I have a hoof. Then I have a mouth. Then I have a hoof and mouth.";
+        // String test_document = "Airline Safety. I am a safe airline.";
         String test_document = """
-            Airline Safety. I am supposed to be safe on airlines. I am an airline who flies and I need to be safe.
+            Airline safety is a paramount concern in the aviation industry and encompasses a wide range of measures to ensure the protection of passengers, crew, and aircraft. It involves stringent regulations, procedures, and technological advancements that are consistently monitored and updated by governing bodies like the Federal Aviation Administration (FAA) and the European Union Aviation Safety Agency (EASA). From pilot training and aircraft maintenance to air traffic control and emergency protocols, every aspect is meticulously scrutinized to minimize risks. The collaboration of airlines, manufacturers, and regulators has led to significant improvements in safety, making commercial air travel one of the safest modes of transportation today. The continuous investment in research, technological innovation, and safety culture further supports the ongoing commitment to passenger well-being and operational integrity.
             """;
         var test_label = kNN.classifyDocument(test_document, k, distanceMetric);
         System.out.println("label: " + test_label + " (" + getCategory(test_label) + ")");

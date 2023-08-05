@@ -43,7 +43,7 @@ public class TFIDF {
             double idf;
             // Calculate IDF
             if (logAddOne) {
-                idf = Math.log(docCount / ((double) (df) + 1));
+                idf = Math.log(1 + (docCount / ((double) (df))));
             }
             else {
                 idf = Math.log(docCount / (double) (df));

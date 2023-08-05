@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 public class docLabel {
-    private String doc;
+    public String doc;
     public String label;
     public double distance;
     public String[] words;
@@ -47,7 +47,7 @@ public class docLabel {
         var text = doc.toLowerCase();
         String[] words = text.split("[\\s,]+");
         words = Arrays.stream(words).map(word -> word.replaceAll("[^a-z]", "")).toArray(String[]::new);
-        Set<String> stopWords = new HashSet<>(Arrays.asList("a", "an", "the", "is", "in", "and", "of", "to", "this", "that"));
+        Set<String> stopWords = new HashSet<>(Arrays.asList("a", "or", "per", "by", "do", "has",  "an", "the", "is", "it", "also", "more", "in", "and", "of", "to", "this", "that", "with", "are", "from", "on", "those", "be", "can", "but", "", "at", "may", "than", "yet", "for", "as", "was", "no", "we", "you", "now", "have", "due", "does"));
         List<String> res = new ArrayList<>();
         for (String word : words) {
             if (!stopWords.contains(word)) {

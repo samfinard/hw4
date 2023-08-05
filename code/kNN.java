@@ -16,7 +16,7 @@ public class kNN {
         for (docLabel doc : docLabels) {
             double distance = 999999999;
             if (distanceMetric.equalsIgnoreCase("ncd")) {
-                // distance = similarity.NCD(unknownDoc, doc.doc);
+                distance = similarity.NCD(unknownDoc, doc.doc);
             } else {
                 var unknown = new docLabel(unknownDoc, " ");
                 var unknownDocVector = tfidfMatrix.getVector(unknown, logAddOne);
@@ -31,7 +31,7 @@ public class kNN {
             docDist.add(new docLabel(doc, distance));
         }
         // sort the distances and keep the top k
-        Collections.sort(docDist, (a, b) -> Double.compare(b.distance, a.distance));
+        Collections.sort(docDist, (a, b) -> Double.compare(a.distance, b.distance));
         var topKDocs = docDist.subList(0, k);
 
         // count the labels and return the most frequent one
