@@ -66,7 +66,7 @@ public class runner {
     public static void main(String[] args) {
         List<docLabel> documents = readDocumentsFromFolder("../data/processed");
         boolean logAddOne = true;
-        String distanceMetric = "cos"; // "cos" for cosine, "ncd" for normalized compression distance, anything else for euclid
+        String distanceMetric = "ncd"; // "cos" for cosine, "ncd" for normalized compression distance, anything else for euclid
         int k = 5; // must be < 10
         kNN kNN = new kNN(documents, logAddOne);
         

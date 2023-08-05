@@ -59,18 +59,4 @@ public class TFIDF {
         }
         return new ArrayList<>(uniqueWords);
     }
-    
-
-    
-    public static void main(String[] args){
-        List<docLabel> documents = new ArrayList<>();
-        documents.add(new docLabel("a b c", "a"));
-        documents.add(new docLabel("a b c", "b"));
-        
-
-        List<String> conceptWords = new ArrayList<>();
-        conceptWords.add("a");
-        conceptWords.add("b");
-        TFIDF tfidf = new TFIDF(documents, true);
-    }
 }

@@ -10,9 +10,9 @@ Need to make
 Input: raw document, similarity measure (euclidean or cosine (or new NCD?))
 Output: k most similar ("nearest") documents in the TF-IDF matrix, as well as their labels/topics
 
-Measure Model Performance
+**Measure Model Performance using Cross Validation**
 - get accuracy
-- experiment with differnet values for k
-- reoprt finding
+- experiment with different values for k, distance metric, and logAddOne
+- reoprt findings
 
 **Bonus(Fuzzy k-NN)**
