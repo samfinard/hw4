@@ -63,17 +63,77 @@ public class runner {
         }
         return res;
     }
+
+    public static List<List<docLabel>> partitionIntoFolds(List<docLabel> documents, int numFolds) {
+        List<List<docLabel>> folds = new ArrayList<>();
+        int foldSize = documents.size() / numFolds;
+    
+        for (int i = 0; i < numFolds; i++) {
+            int startIndex = i * foldSize;
+            int endIndex = (i + 1) * foldSize;
+    
+            // Handle the last fold if the number of documents is not evenly divisible by numFolds
+            if (i == numFolds - 1 && documents.size() % numFolds != 0) {
+                endIndex = documents.size();
+            }
+    
+            List<docLabel> fold = new ArrayList<>(documents.subList(startIndex, endIndex));
+            folds.add(fold);
+        }
+    
+        return folds;
+    }
+    
+
+    public static double crossValidation(List<docLabel> documents, int k, String distanceMetric, boolean logAddOne) {
+        List<List<docLabel>> folds = partitionIntoFolds(documents, 10);
+    
+        int totalTests = 0;
+        int score = 0; // Initialize score
+    
+        for (int i = 0; i < folds.size(); i++) {
+            List<docLabel> trainingData = new ArrayList<>();
+            for (int j = 0; j < folds.size(); j++) {
+                if (i != j) trainingData.addAll(folds.get(j));
+            }
+            List<docLabel> testData = folds.get(i);
+    
+            kNN kNN = new kNN(trainingData, logAddOne); // Using the provided logAddOne
+    
+            // Test on each document in the test fold
+            for (docLabel testDoc : testData) {
+                String test_label = kNN.classifyDocument(testDoc.doc, k, distanceMetric);
+                // Check if the classified label matches the actual label
+                if (test_label.equals(testDoc.label)) {
+                    score += 1; // Increment score if the labels match
+                }
+                totalTests += 1; // Increment the total number of tests
+            }
+        }
+    
+        return (double) score / totalTests * 100; // Calculate and return accuracy
+    }
+    
     public static void main(String[] args) {
         List<docLabel> documents = readDocumentsFromFolder("../data/processed");
-        boolean logAddOne = true;
-        String distanceMetric = "ncd"; // "cos" for cosine, "ncd" for normalized compression distance, anything else for euclid
-        int k = 5; // must be < 10
-        kNN kNN = new kNN(documents, logAddOne);
+        // Get performance % for each k
         
+        // for (int i = 1; i < 10; i++) {
+        //     double accuracy = crossValidation(documents, i, distanceMetric, logAddOne);
+        //     System.out.println("k: " + i);
+        //     System.out.println("Accuracy: " + accuracy + "%");
+        // }
+        
+        // customizable
+        boolean logAddOne = true; // determines whether idf = log(1 + (docCount / df)) or idf = log(docCount / df), true removes negatives, avoids div by 0, and avoids term being given 0 weight just b/c it appears in all docs
+        String distanceMetric = "ncd"; // "cos" for cosine, "euc" for euclidean, "ncd" for normalized compression distance
+        int k = 6; // must be 0 < k < 10
+
+        // Classifies test document
         String test_document = """
         Airlines airline I am a safe hoof and mouth.
             """;
-        
+        kNN kNN = new kNN(documents, logAddOne);
         var test_label = kNN.classifyDocument(test_document, k, distanceMetric);
         System.out.println("label: " + test_label + " (" + getCategory(test_label) + ")");
     }
