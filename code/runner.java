@@ -98,7 +98,7 @@ public class runner {
             }
             List<docLabel> testData = folds.get(i);
     
-            kNN kNN = new kNN(trainingData, logAddOne); // Using the provided logAddOne
+            kNN kNN = new kNN(trainingData); // Using the provided logAddOne
     
             // Test on each document in the test fold
             for (docLabel testDoc : testData) {
@@ -125,7 +125,6 @@ public class runner {
         // }
         
         // customizable
-        boolean logAddOne = true; // determines whether idf = log(1 + (docCount / df)) or idf = log(docCount / df), true removes negatives, avoids div by 0, and avoids term being given 0 weight just b/c it appears in all docs
         String distanceMetric = "ncd"; // "cos" for cosine, "euc" for euclidean, "ncd" for normalized compression distance
         int k = 6; // must be 0 < k < 10
 
@@ -133,7 +132,7 @@ public class runner {
         String test_document = """
         Airlines airline I am a safe hoof and mouth.
             """;
-        kNN kNN = new kNN(documents, logAddOne);
+        kNN kNN = new kNN(documents);
         var test_label = kNN.classifyDocument(test_document, k, distanceMetric);
         System.out.println("label: " + test_label + " (" + getCategory(test_label) + ")");
     }

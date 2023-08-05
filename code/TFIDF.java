@@ -27,12 +27,12 @@ public class TFIDF {
         // Calculate TF-IDF for each document and concept word
         for (int i = 0; i < documents.size(); i++) {
             var document = documents.get(i);
-            res[i] = getVector(document, logAddOne); 
+            res[i] = getVector(document); 
         }
         return res;
     }
 
-    public double[] getVector(docLabel document, boolean logAddOne) {
+    public double[] getVector(docLabel document) {
         double[] res = new double[conceptWords.size()];
         double docCount = documents.size();
         for (int j = 0; j < conceptWords.size(); j++) {
@@ -42,12 +42,7 @@ public class TFIDF {
             var df = docFreq.getOrDefault(word, 0);
             double idf;
             // Calculate IDF
-            if (logAddOne) {
-                idf = Math.log(1 + (docCount / ((double) (df))));
-            }
-            else {
-                idf = Math.log(docCount / (double) (df));
-            }
+            idf = Math.log(1 + (docCount / ((double) (df))));
             res[j] = tf * idf;
         }
         return res;

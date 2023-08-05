@@ -3,12 +3,9 @@ import java.util.*;
 public class kNN {
     private TFIDF tfidfMatrix;
     private List<docLabel> docLabels;
-    boolean logAddOne;
 
-    public kNN(List<docLabel> docs,boolean logAddOne) {
+    public kNN(List<docLabel> docs) {
         this.docLabels = docs;
-        this.tfidfMatrix = new TFIDF(docs, logAddOne);
-        this.logAddOne = logAddOne;
     }
     public String classifyDocument(String unknownDoc, int k, String distanceMetric) { // e c    n
         List<docLabel> docDist = new ArrayList<>();
@@ -19,13 +16,17 @@ public class kNN {
                 distance = similarity.NCD(unknownDoc, doc.doc);
             } else {
                 var unknown = new docLabel(unknownDoc, " ");
-                var unknownDocVector = tfidfMatrix.getVector(unknown, logAddOne);
-                var otherDocVector = tfidfMatrix.getVector(doc, logAddOne);
+                var unknownDocVector = tfidfMatrix.getVector(unknown);
+                var otherDocVector = tfidfMatrix.getVector(doc);
 
                 if (distanceMetric.equalsIgnoreCase("cos")) {
                     distance = similarity.cosineSim(unknownDocVector, otherDocVector);
-                } else { // Default to Euclidean distance
+                } else if (distanceMetric.equalsIgnoreCase("euc")) { // Euclidean distance
                     distance = similarity.euclideanDist(unknownDocVector, otherDocVector);
+                }
+                else {
+                    System.out.println("Invalid distance metric + " + distanceMetric + "");
+                    System.exit(1);
                 }
             }
             docDist.add(new docLabel(doc, distance));
