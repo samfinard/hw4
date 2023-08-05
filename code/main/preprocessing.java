@@ -39,8 +39,6 @@
 //         .forEach(doc -> {
 //             try {
 //                 String text = new String(Files.readAllBytes(doc));
-
-
 //                 List<String> tokens = new ArrayList<String>();
 //                 Properties nlpProps = new Properties();
 //                 nlpProps.setProperty("annotators", "tokenize, ssplit, pos, lemma");
