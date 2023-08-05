@@ -19,31 +19,26 @@ public class TFIDF {
         docFreq = new HashMap<>();
         for (String word : conceptWords) {
             for (docLabel doc : documents) {
-                if (doc.doc.contains(word)) {
+                if (doc.contains(word)) {
                     docFreq.put(word, docFreq.getOrDefault(word, 0) + 1);
                 }
             }
         }
         // Calculate TF-IDF for each document and concept word
         for (int i = 0; i < documents.size(); i++) {
-            String document = documents.get(i).doc;
+            var document = documents.get(i);
             res[i] = getVector(document, logAddOne); 
         }
         return res;
     }
 
-    public double[] getVector(String document, boolean logAddOne) {
+    public double[] getVector(docLabel document, boolean logAddOne) {
         double[] res = new double[conceptWords.size()];
-        int docCount = documents.size();        
+        double docCount = documents.size();
         for (int j = 0; j < conceptWords.size(); j++) {
             String word = conceptWords.get(j);
-            double tf = 0;
             // Count the occurrences of the word in the document
-            int index = document.indexOf(word);
-            while (index != -1) {
-                tf++;
-                index = document.indexOf(word, index + word.length());
-            }
+            var tf = document.wordCount(word);
             var df = docFreq.getOrDefault(word, 0);
             double idf;
             // Calculate IDF
@@ -60,7 +55,7 @@ public class TFIDF {
     private List<String> createConceptWords(List<docLabel> docs) {
         Set<String> uniqueWords = new HashSet<>();
         for (var doc : docs) {
-            uniqueWords.addAll(Arrays.asList(doc.doc.split(" ")));
+            uniqueWords.addAll(Arrays.asList(doc.words));
         }
         return new ArrayList<>(uniqueWords);
     }

@@ -14,12 +14,13 @@ public class kNN {
         List<docLabel> docDist = new ArrayList<>();
         // calculate distance from unknownDoc to all others
         for (docLabel doc : docLabels) {
-            double distance;
+            double distance = 999999999;
             if (distanceMetric.equalsIgnoreCase("ncd")) {
-                distance = similarity.NCD(unknownDoc, doc.doc);
+                // distance = similarity.NCD(unknownDoc, doc.doc);
             } else {
-                var unknownDocVector = tfidfMatrix.getVector(unknownDoc, logAddOne);
-                var otherDocVector = tfidfMatrix.getVector(doc.doc, logAddOne);
+                var unknown = new docLabel(unknownDoc, " ");
+                var unknownDocVector = tfidfMatrix.getVector(unknown, logAddOne);
+                var otherDocVector = tfidfMatrix.getVector(doc, logAddOne);
 
                 if (distanceMetric.equalsIgnoreCase("cos")) {
                     distance = similarity.cosineSim(unknownDocVector, otherDocVector);
@@ -27,7 +28,7 @@ public class kNN {
                     distance = similarity.euclideanDist(unknownDocVector, otherDocVector);
                 }
             }
-            docDist.add(new docLabel(doc.doc, doc.label, distance));
+            docDist.add(new docLabel(doc, distance));
         }
         // sort the distances and keep the top k
         Collections.sort(docDist, (a, b) -> Double.compare(b.distance, a.distance));
