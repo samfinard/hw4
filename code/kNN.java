@@ -1,13 +1,13 @@
 import java.util.*;
 
 public class kNN {
-    private TFIDFnew tfidfMatrix;
+    private TFIDF tfidfMatrix;
     private List<docLabel> docLabels;
     boolean logAddOne;
 
     public kNN(List<docLabel> docs,boolean logAddOne) {
         this.docLabels = docs;
-        this.tfidfMatrix = new TFIDFnew(docs, logAddOne);
+        this.tfidfMatrix = new TFIDF(docs, logAddOne);
         this.logAddOne = logAddOne;
     }
     public String classifyDocument(String unknownDoc, int k, String distanceMetric) { // e c    n

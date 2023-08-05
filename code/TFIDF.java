@@ -1,84 +1,62 @@
 import java.util.*;
 
 public class TFIDF {
-
     private List<docLabel> documents;
     private List<String> conceptWords;
-    private Map<String, Map<String, Integer>> tf;
-    private Map<String, Double> idf;
-    private Map<String, Map<String, Double>> tfidfMatrix;
+    private double[][] tfidfMatrix;
+    private Map<String, Integer> docFreq;
 
     public TFIDF(List<docLabel> documents, boolean logAddOne) {
         this.documents = documents;
         this.conceptWords = createConceptWords(documents);
-        this.tf = new HashMap<>();
-        this.idf = new HashMap<>();
-        this.tfidfMatrix = new HashMap<>();
-        calculateTFandIDF(logAddOne);
+        this.tfidfMatrix = makeMatrix(logAddOne);
     }
 
 
-    private void calculateTFandIDF(boolean logAddOne) {
-        int docCount = documents.size();
-        Map<String, Integer> docFreq = new HashMap<>();
-
-        // Calculate term frequency and document frequency
-        for (int i = 0; i < docCount; i++) {
-            String[] words = documents.get(i).doc.split(" ");
-            Map<String, Integer> wordFreq = new HashMap<>();
-            for (String word : words) {
-                if (conceptWords.contains(word)) {
-                    wordFreq.put(word, wordFreq.getOrDefault(word, 0) + 1);
+    private double[][] makeMatrix(boolean logAddOne) {
+        var res = new double[documents.size()][conceptWords.size()];        
+        // Calculate document frequency for each concept word
+        docFreq = new HashMap<>();
+        for (String word : conceptWords) {
+            for (docLabel doc : documents) {
+                if (doc.doc.contains(word)) {
                     docFreq.put(word, docFreq.getOrDefault(word, 0) + 1);
                 }
             }
-            tf.put("Document" + (i + 1), wordFreq);
         }
-        
-        // Calculate inverse document frequency
-        if (logAddOne) {
-            for (String word : docFreq.keySet()) {
-                idf.put(word, Math.log1p((double) docCount / docFreq.get(word))); // == math.log(1.0 + x)
-            }
-        }
-        else {
-            for (String word : docFreq.keySet()) {
-                idf.put(word, Math.log((double) docCount / docFreq.get(word))); // == math.log(1.0)
-            }
-        }
-    }
-
-    public double calculateTFIDF(String document, String word) {
-        Map<String, Integer> wordFreq = tf.get(document);
-        Double wordIDF = idf.get(word);
-        if (wordFreq == null || wordIDF == null) {
-            return 0;
-        }
-        return wordFreq.getOrDefault(word, 0) * wordIDF;
-    }
-
-    public void createTFIDFMatrix() {
+        // Calculate TF-IDF for each document and concept word
         for (int i = 0; i < documents.size(); i++) {
-            Map<String, Double> docTFIDF = new HashMap<>();
-            for (String word : conceptWords) {
-                double tfidfScore = calculateTFIDF("Document" + (i + 1), word);
-                docTFIDF.put(word, tfidfScore);
-            }
-            tfidfMatrix.put("Document" + (i + 1), docTFIDF);
+            String document = documents.get(i).doc;
+            res[i] = getVector(document, logAddOne); 
         }
+        return res;
     }
 
-    public void printTFIDFMatrix() {
-        for (String doc : tfidfMatrix.keySet()) {
-            System.out.println("Document: " + doc);
-            Map<String, Double> docTFIDF = tfidfMatrix.get(doc);
-            for (String word : docTFIDF.keySet()) {
-                System.out.println(word + ", " + docTFIDF.get(word));
+    public double[] getVector(String document, boolean logAddOne) {
+        double[] res = new double[conceptWords.size()];
+        int docCount = documents.size();        
+        for (int j = 0; j < conceptWords.size(); j++) {
+            String word = conceptWords.get(j);
+            double tf = 0;
+            // Count the occurrences of the word in the document
+            int index = document.indexOf(word);
+            while (index != -1) {
+                tf++;
+                index = document.indexOf(word, index + word.length());
             }
-            System.out.println("-----------------------");
+            var df = docFreq.getOrDefault(word, 0);
+            double idf;
+            // Calculate IDF
+            if (logAddOne) {
+                idf = Math.log(docCount / ((double) (df) + 1));
+            }
+            else {
+                idf = Math.log(docCount / (double) (df));
+            }
+            res[j] = tf * idf;
         }
+        return res;
     }
-
     private List<String> createConceptWords(List<docLabel> docs) {
         Set<String> uniqueWords = new HashSet<>();
         for (var doc : docs) {
@@ -86,13 +64,9 @@ public class TFIDF {
         }
         return new ArrayList<>(uniqueWords);
     }
-    public List<Double> getVector (String doc) {
-        List<Double> vector = new ArrayList<>();
-        for (String word : conceptWords) {
-            vector.add(calculateTFIDF(doc, word));
-        }
-        return vector;
-    }
+    
+
+    
     public static void main(String[] args){
         List<docLabel> documents = new ArrayList<>();
         documents.add(new docLabel("a b c", "a"));
@@ -103,7 +77,5 @@ public class TFIDF {
         conceptWords.add("a");
         conceptWords.add("b");
         TFIDF tfidf = new TFIDF(documents, true);
-        tfidf.createTFIDFMatrix();
-        tfidf.printTFIDFMatrix();
     }
 }
