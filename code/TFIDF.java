@@ -7,18 +7,20 @@ public class TFIDF {
     private Map<String, Map<String, Integer>> tf;
     private Map<String, Double> idf;
     private Map<String, Map<String, Double>> tfidfMatrix;
+    private boolean logAddOne;
 
-    public TFIDF(List<String> documents, List<String> conceptWords) {
+    public TFIDF(List<String> documents, boolean logAddOne) {
         this.documents = documents;
-        this.conceptWords = conceptWords;
+        this.conceptWords = createConceptWords(documents);
+        this.logAddOne = logAddOne;
         this.tf = new HashMap<>();
         this.idf = new HashMap<>();
         this.tfidfMatrix = new HashMap<>();
-        calculateTFandIDF();
+        calculateTFandIDF(logAddOne);
     }
 
 
-    private void calculateTFandIDF() {
+    private void calculateTFandIDF(boolean logAddOne) {
         int docCount = documents.size();
         Map<String, Integer> docFreq = new HashMap<>();
 
@@ -34,10 +36,17 @@ public class TFIDF {
             }
             tf.put("Document" + (i + 1), wordFreq);
         }
-
+        
         // Calculate inverse document frequency
-        for (String word : docFreq.keySet()) {
-            idf.put(word, Math.log((double) docCount / docFreq.get(word)));
+        if (logAddOne) {
+            for (String word : docFreq.keySet()) {
+                idf.put(word, Math.log1p((double) docCount / docFreq.get(word))); // == math.log(1.0 + x)
+            }
+        }
+        else {
+            for (String word : docFreq.keySet()) {
+                idf.put(word, Math.log((double) docCount / docFreq.get(word))); // == math.log(1.0)
+            }
         }
     }
 
@@ -71,16 +80,24 @@ public class TFIDF {
             System.out.println("-----------------------");
         }
     }
+
+    private List<String> createConceptWords(List<String> documents) {
+        Set<String> uniqueWords = new HashSet<>();
+        for (String doc : documents) {
+            uniqueWords.addAll(Arrays.asList(doc.split(" ")));
+        }
+        return new ArrayList<>(uniqueWords);
+    }
     public static void main(String[] args){
         List<String> documents = new ArrayList<>();
-        documents.add("a");
-        documents.add("a");
-        documents.add("a");
+        documents.add("a c c");
+        documents.add("a b b b b");
+        documents.add("a a d d d d");
 
         List<String> conceptWords = new ArrayList<>();
         conceptWords.add("a");
         conceptWords.add("b");
-        TFIDF tfidf = new TFIDF(documents, conceptWords);
+        TFIDF tfidf = new TFIDF(documents, true);
         tfidf.createTFIDFMatrix();
         tfidf.printTFIDFMatrix();
     }

@@ -28,7 +28,11 @@ public class runner {
 
     public static void main(String[] args) {
         runner m = new runner();
-        List<String> folder_contents = m.folderToList("../data/processed");
-        System.out.println(folder_contents.get(0));
+        List<String> documents = m.folderToList("../data/processed");
+
+        TFIDF tfidf = new TFIDF(documents, true);
+        tfidf.createTFIDFMatrix();
+        tfidf.printTFIDFMatrix();
+
     }
 }
