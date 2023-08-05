@@ -1,4 +1,8 @@
 # hw4
 Implementing KNN to cluster text documents.
 
-Hopefully this works!
+Need to write about NCD
+
+Write about 1 + IDF smoothing
+
+Write about how to run it and where to go for this github
