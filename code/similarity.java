@@ -22,7 +22,7 @@ public class similarity {
         }
         return Math.sqrt(distance);
     }
-    private static int getCompressedSize(String str) {
+    public static int getCompressedSize(String str) {
         int size = 0;
         if (str == null || str.length() == 0) {
             return size;
@@ -38,10 +38,10 @@ public class similarity {
         }
         return size;
     }
-    public static int NCD(String str1, String str2) { // Normalized Compression Distance
-        int size1 = getCompressedSize(str1);
-        int size2 = getCompressedSize(str2);
-        int size12 = getCompressedSize(str1 + str2);
+    public static double NCD(String str1, String str2) { // Normalized Compression Distance
+        double size1 = getCompressedSize(str1);
+        double size2 = getCompressedSize(str2);
+        double size12 = getCompressedSize(str1 + str2);
         return (size12 - Math.min(size1, size2)) / Math.max(size1, size2);
     }
 }
