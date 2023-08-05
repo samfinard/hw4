@@ -5,30 +5,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class runner {
-    public List<String> folderToList(String folderPath) {
-        List<String> folder_contents = new ArrayList<String>();
-        try (Stream<Path> walk = Files.walk(Paths.get(folderPath))) {
-            List<Path> textFiles = walk
-            .filter(Files::isRegularFile)
-            .filter(x -> x.toString().endsWith(".txt"))
-            .collect(Collectors.toList());
-            for (Path textFile : textFiles) {
-                String text = new String(Files.readAllBytes(textFile));
-                folder_contents.add(text);
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return folder_contents;
-    }
-
     public static List<docLabel> readDocumentsFromFolder(String folderPath) {
         List<docLabel> documents = new ArrayList<>();
         File folder = new File(folderPath);
@@ -87,11 +67,11 @@ public class runner {
         List<docLabel> documents = readDocumentsFromFolder("../data/processed");
         boolean logAddOne = true;
         String distanceMetric = "cos"; // "cos" for cosine, "ncd" for normalized compression distance, anything else for euclid
-        int k = 2; // must be < 10
+        int k = 5; // must be < 10
         kNN kNN = new kNN(documents, logAddOne);
         
         String test_document = """
-        Airline Safety. I am a safe airline.
+        Airlines airline I am a safe hoof and mouth.
             """;
         
         var test_label = kNN.classifyDocument(test_document, k, distanceMetric);

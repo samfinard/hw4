@@ -14,7 +14,7 @@ public class kNN {
         List<docLabel> docDist = new ArrayList<>();
         // calculate distance from unknownDoc to all others
         for (docLabel doc : docLabels) {
-            double distance = 999999999;
+            double distance = Integer.MAX_VALUE;
             if (distanceMetric.equalsIgnoreCase("ncd")) {
                 distance = similarity.NCD(unknownDoc, doc.doc);
             } else {
