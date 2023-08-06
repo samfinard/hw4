@@ -1,5 +1,9 @@
 # hw4: Implementing KNN to cluster text document
 
+**How to Run**
+
+Open runner.java and in the main method change test_document_path to the filepath of the document you want to classify, and change stopword_path to the filepath of stopwords.txt on you computer. Change k and the distance metric to whatever you want.
+
 **Preprocessing and vectorization**
 
 As with HW3, we used Stanford's CoreNLP Library to preprocess the data. We were able to achieve this by repurposing the previous preprocessing.java file from HW3, and then writing a function called preprocessData in the runner.java file (the one with the main method).
@@ -30,6 +34,3 @@ NCD(x,y) returns a distance measure between string x and y from [0,1] where simi
 - where xy is the string concatenation x + y
 
 This implementation is found in similarity.java
-
-**How to Run**
-Open runner.java and change filePath to the filepath of the document you want to classify. Change k and the distance metric to whatever you want.
