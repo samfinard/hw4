@@ -1,8 +1,14 @@
 # hw4: Implementing KNN to cluster text document
 
+
+Sam Finard, Derek Gubbens
+
+
 **How to Run**
 
 Open runner.java and in the main method change test_document_path to the filepath of the document you want to classify, and change stopword_path to the filepath of stopwords.txt on you computer. Change k and the distance metric to whatever you want.
+
+You will need to have the files for Stanford CoreNLP 4.5.4 (used on the previous homework) on your computer in the same directory as the project. Since we worked on this project over github, we are unable to upload the folder containing all the CoreNLP files to our project as some of the file sizes are too large. This is required in order for the preprocessing to work.
 
 **Preprocessing and vectorization**
 
@@ -23,8 +29,8 @@ Our kNN classifier takes three inputs: k, the distance metric, and the target do
 
 To evaluate the performance of our classifier, we used 10-fold cross-validation on all 27 combinations of k=1,...,9, and our three possible distance metrics. Our model performed its best at k=1 using NCD, although all distance metrics perform about the same with k=6 or higher. 
 
-![performance_by_k](https://github.com/samfinard/hw4/assets/104854051/5c0cef5c-4fd2-4651-b567-bbc10caecbfa)
-Our baseline metric is 33% accuracy because that's the probability of randomly guessing 1 out of 3 categories correctly.
+![Performance by k](https://github.com/samfinard/hw4/assets/104854051/51605974-08e7-4d33-b768-574eeaf6aa60)
+Our baseline metric is 33% accuracy because that's the probability of randomly guessing 1 out of the 3 categories correctly.
 
 NCD stands for normalized compressed distance, which I learned about in ["“Low-Resource” Text Classification: A Parameter-Free Classification Method with Compressors"](https://aclanthology.org/2023.findings-acl.426/) which claims to outperform BERT using GZIP and kNN (just like in this homework).
 
