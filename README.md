@@ -19,6 +19,7 @@ Our kNN classifier takes three inputs: k, the distance metric, and the target do
 
 To evaluate the performance of our classifier, we used 10-fold cross-validation on all 27 combinations of k=1,...,9, and our three possible distance metrics. Our model performed its best at k=1 using NCD, although all distance metrics perform about the same with k=6 or higher. 
 
+![performance_by_k](https://github.com/samfinard/hw4/assets/104854051/5c0cef5c-4fd2-4651-b567-bbc10caecbfa)
 
 
 NCD stands for normalized compressed distance, which I learned about in [this paper](https://aclanthology.org/2023.findings-acl.426/) which claims to outperform BERT with a parameter-free classification method (they used GZIP + kNN just like in this homework).
