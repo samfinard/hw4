@@ -9,14 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class runner {
-
-    // public static String preprocessData(String filePath, String stopWordPath) throws IOException{
-    //     preprocessing.stopWordDoc(stopWordPath);
-    //     List<String> fileStrings = preprocessing.reader(filePath);
-
-    //     String outputString = String.join(" ", fileStrings);
-    //     return outputString;
-    // }
+    private static double[][] confusionMatrix = new double[3][3];
 
     public static List<docLabel> readDocumentsFromFolder(String folderPath) {
         List<docLabel> documents = new ArrayList<>();
@@ -60,7 +53,7 @@ public class runner {
     }
 
     private static String getCategory(String str) {
-        String res = "";
+        var res = "";
         if (str.contains("C1")) {
             res = "Airline Safety";
         }
@@ -72,6 +65,20 @@ public class runner {
         }
         return res;
     }
+
+    private static int getClassIndex(String label) {
+        switch (label) {
+            case "C1":
+                return 0;
+            case "C4":
+                return 1;
+            case "C7":
+                return 2;
+            default:
+                throw new IllegalArgumentException("Unexpected label: " + label);
+        }
+    }
+    
 
     public static List<List<docLabel>> partitionIntoFolds(List<docLabel> documents, int numFolds) {
         List<List<docLabel>> folds = new ArrayList<>();
@@ -92,11 +99,9 @@ public class runner {
     
         return folds;
     }
-    
 
     public static double crossValidation(List<docLabel> documents, int k, String distanceMetric) {
         List<List<docLabel>> folds = partitionIntoFolds(documents, 10);
-    
         int totalTests = 0;
         int score = 0; 
     
@@ -113,6 +118,9 @@ public class runner {
             for (docLabel testDoc : testData) {
                 String test_label = kNN.classifyDocument(testDoc.doc, k, distanceMetric);
                 // Check if the classified label matches the actual label
+                int actualClass = getClassIndex(testDoc.label);
+                int predictedClass = getClassIndex(test_label);
+                confusionMatrix[actualClass][predictedClass] += 1.0;
                 if (test_label.equals(testDoc.label)) {
                     score += 1; // Increment score if the labels match
                 }
@@ -122,6 +130,8 @@ public class runner {
     
         return (double) score / totalTests * 100; // Calculate and return accuracy
     }
+    
+    
     // public static String preprocessData(String filePath, String stopWordPath){
     //     preprocessing.stopWordDoc(stopWordPath);
     //     List<String> fileStrings = preprocessing.reader(filePath);
@@ -137,6 +147,7 @@ public class runner {
             return null;
         }
     }
+    
     private static void printFuzzy(Map<String, Double> fuzzyResult) {
         Map<String, Double> sortedFuzzyRes = fuzzyResult.entrySet()
         .stream()
@@ -151,30 +162,72 @@ public class runner {
             var c = entry.getKey();
             var category = getCategory(entry.getKey());
             var percent = entry.getValue();
-            System.out.printf(c + " (" + category + "):" + "%.2f%%" + "\n", percent);
+            System.out.printf(c + " (" + category + "): " + "%.2f%%" + "\n", percent);
         }
     }
-    public static void main(String[] args) {
-        List<docLabel> database = readDocumentsFromFolder("../data/processed");
+   
+    private static void printConfusionMatrix(double[][] matrix, String[] classNames) {
+        if (matrix.length != classNames.length || matrix[0].length != classNames.length) {
+            System.out.println("Error: Matrix dimensions do not match class names.");
+            return;
+        }
+        System.out.print("\t");
+        for (String className : classNames) {
+            System.out.print(className + "\t");
+        }
+        System.out.println();
+    
+        for (int i = 0; i < matrix.length; i++) {
+            System.out.print(classNames[i] + "\t");
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.printf("%.2f\t", matrix[i][j]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
 
-        // Get performance % for each k
+    private static void printPerformance(List<docLabel> database, String distanceMetric) {
+        for (int i = 1; i < 10; i++) {
+            double accuracy = crossValidation(database, i, distanceMetric);
+            System.out.println("k: " + i);
+            System.out.println("Accuracy: " + accuracy + "%");
+        }
+    }
 
-        // for (int i = 1; i < 10; i++) {
-        //     double accuracy = crossValidation(database, i, "man");
-        //     System.out.println("k: " + i);
-        //     System.out.println("Accuracy: " + accuracy + "%");
-        // }
-        
+    private static void printConfusionMetrics(double[][] matrix) {
+        double truePos = 0;
+        double falsePos = 0;
+        double falseNeg = 0;
+        double trueNeg = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                if (i == j) truePos += matrix[i][j];
+                else {
+                    falsePos += matrix[i][j];
+                    falseNeg += matrix[j][i];
+                }
+            }
+            for (int k = 0; k < matrix.length; k++) {
+                if (k != i) {
+                    for (int l = 0; l < matrix.length; l++) {
+                        if (l != i) trueNeg += matrix[k][l];
+                    } 
+                }
+            }
+        }
+        double accuracy = 100 * (truePos + trueNeg) / (truePos + falsePos + falseNeg + trueNeg);
+        double precision = 100 * truePos / (truePos + falsePos);
+        double recall = 100 * truePos / (truePos + falseNeg);
+        double F1 = (precision + recall == 0) ? 0 : 2 * precision * recall / (precision + recall);
 
-// "cos" for cosine, "euc" for euclidean, "ncd" for normalized compression distance, "man" for manhattan
-        kNN kNN = new kNN(database);
+        System.out.printf("Accuracy: %.2f%%\n", accuracy);
+        System.out.printf("Precision: %.2f%%\n", precision);
+        System.out.printf("Recall: %.2f%%\n", recall);
+        System.out.printf("F1 Score: %.2f\n", F1);
+    }
 
-        // args = new String[]{"cos", "3", "../data/test1.txt"};
-
-        String distanceMetric = args[0];
-        int k = Integer.parseInt(args[1]);
-        String filepath = args[2];
-
+    private static void testValidInput(int k, String distanceMetric, String filepath) {
         if (k < 1 || k > 9) {
             System.out.println("Invalid k value");
             System.exit(1);
@@ -193,7 +246,29 @@ public class runner {
             System.out.println("Invalid distance metric. expected man, cos, euc, or ncd.");
             System.exit(1);
         }
+    }
+    public static void main(String[] args) {
+        List<docLabel> database = readDocumentsFromFolder("../data/processed");
+        kNN kNN = new kNN(database);
 
+        String distanceMetric = args[0];
+        int k = Integer.parseInt(args[1]);
+        String filepath = args[2];
+
+        // Get performance % for each k given a distanceMetric - doesn't classify your document
+        System.out.println("Printing accuracy per k value...");
+        printPerformance(database, distanceMetric);
+
+        // Confusion Matrix is generated from cross-validation, not classifying your document
+        String[] classNames = {"C1","C4","C7"};
+        System.out.println("Confusion Matrix using " + distanceMetric);
+        printConfusionMatrix(confusionMatrix, classNames);
+        printConfusionMetrics(confusionMatrix);
+
+        // Classify your document
+        System.out.println("\nClassifying your document...");
+        testValidInput(k, distanceMetric, filepath);
+        var test_data = getStringFromFilePath(filepath);
         var test_result= kNN.fuzzyClassifyDocument(test_data, k, distanceMetric);
         printFuzzy(test_result);
     }
