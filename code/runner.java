@@ -224,7 +224,7 @@ public class runner {
         System.out.printf("Accuracy: %.2f%%\n", accuracy);
         System.out.printf("Precision: %.2f%%\n", precision);
         System.out.printf("Recall: %.2f%%\n", recall);
-        System.out.printf("F1 Score: %.2f\n", F1);
+        // System.out.printf("F1 Score: %.2f\n", F1);
     }
 
     private static void testValidInput(int k, String distanceMetric, String filepath) {
