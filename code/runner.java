@@ -265,7 +265,7 @@ public class runner {
         printConfusionMatrix(confusionMatrix, classNames);
         printConfusionMetrics(confusionMatrix);
 
-        // Fuzzy classification of your document
+        // Fuzzy classification of your
         System.out.println("\nClassifying your document...");
         testValidInput(k, distanceMetric, filepath);
         var test_data = getStringFromFilePath(filepath);
