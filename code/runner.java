@@ -85,11 +85,11 @@ public class runner {
     }
     
 
-    public static double crossValidation(List<docLabel> documents, int k, String distanceMetric, boolean logAddOne) {
+    public static double crossValidation(List<docLabel> documents, int k, String distanceMetric) {
         List<List<docLabel>> folds = partitionIntoFolds(documents, 10);
     
         int totalTests = 0;
-        int score = 0; // Initialize score
+        int score = 0; 
     
         for (int i = 0; i < folds.size(); i++) {
             List<docLabel> trainingData = new ArrayList<>();
@@ -98,7 +98,7 @@ public class runner {
             }
             List<docLabel> testData = folds.get(i);
     
-            kNN kNN = new kNN(trainingData); // Using the provided logAddOne
+            kNN kNN = new kNN(trainingData);
     
             // Test on each document in the test fold
             for (docLabel testDoc : testData) {
@@ -116,10 +116,11 @@ public class runner {
     
     public static void main(String[] args) {
         List<docLabel> documents = readDocumentsFromFolder("../data/processed");
+        
         // Get performance % for each k
         
         // for (int i = 1; i < 10; i++) {
-        //     double accuracy = crossValidation(documents, i, distanceMetric, logAddOne);
+        //     double accuracy = crossValidation(documents, i, distanceMetric);
         //     System.out.println("k: " + i);
         //     System.out.println("Accuracy: " + accuracy + "%");
         // }
