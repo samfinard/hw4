@@ -22,6 +22,18 @@ public class similarity {
         }
         return Math.sqrt(distance);
     }
+    public static double manhattanDist(double[] vector1, double[] vector2) {
+        if (vector1.length != vector2.length) {
+            throw new IllegalArgumentException("Vectors must be of the same length");
+        }
+    
+        double distance = 0;
+        for (int i = 0; i < vector1.length; i++) {
+            distance += Math.abs(vector1[i] - vector2[i]);
+        }
+        return distance;
+    }
+    
     public static int getCompressedSize(String str) {
         int size = 0;
         if (str == null || str.length() == 0) {

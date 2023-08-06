@@ -1,27 +1,22 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.io.FileWriter;
-
 
 public class runner {
 
-    public static String preprocessData(String filePath, String stopWordPath) throws IOException{
-        preprocessing.stopWordDoc(stopWordPath);
-        List<String> fileStrings = preprocessing.reader(filePath);
+    // public static String preprocessData(String filePath, String stopWordPath) throws IOException{
+    //     preprocessing.stopWordDoc(stopWordPath);
+    //     List<String> fileStrings = preprocessing.reader(filePath);
 
-        String outputString = String.join(" ", fileStrings);
-        return outputString;
-    }
+    //     String outputString = String.join(" ", fileStrings);
+    //     return outputString;
+    // }
 
     public static List<docLabel> readDocumentsFromFolder(String folderPath) {
         List<docLabel> documents = new ArrayList<>();
@@ -127,37 +122,59 @@ public class runner {
     
         return (double) score / totalTests * 100; // Calculate and return accuracy
     }
-    public static String preprocessData(String filePath, String stopWordPath){
-        preprocessing.stopWordDoc(stopWordPath);
-        List<String> fileStrings = preprocessing.reader(filePath);
-        String outputString = String.join(" ", fileStrings);
-        return outputString;
-    }
+    // public static String preprocessData(String filePath, String stopWordPath){
+    //     preprocessing.stopWordDoc(stopWordPath);
+    //     List<String> fileStrings = preprocessing.reader(filePath);
+    //     String outputString = String.join(" ", fileStrings);
+    //     return outputString;
+    // }
 
+    private static void printFuzzy(Map<String, Double> fuzzyResult) {
+        Map<String, Double> sortedFuzzyRes = fuzzyResult.entrySet()
+        .stream()
+        .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+        .collect(Collectors.toMap(
+            Map.Entry::getKey, 
+            Map.Entry::getValue, 
+            (oldValue, newValue) -> oldValue, 
+            LinkedHashMap::new));
+
+        for (Map.Entry<String, Double> entry : sortedFuzzyRes.entrySet()) {
+            var c = entry.getKey();
+            var category = getCategory(entry.getKey());
+            var percent = entry.getValue();
+            System.out.println(c + " (" + category + "): " + percent + "%");
+        }
+    }
     public static void main(String[] args) {
-        List<docLabel> documents = readDocumentsFromFolder("../data/processed");
-        
-        // Get performance % for each k
+        List<docLabel> database = readDocumentsFromFolder("../data/processed");
+
+// "cos" for cosine, "euc" for euclidean, "ncd" for normalized compression distance, "man" for manhattan
+        String distanceMetric = "euc"; 
+        int k = 6; // must be 0 < k < 10
+
+// Get performance % for each k
         
         // for (int i = 1; i < 10; i++) {
-        //     double accuracy = crossValidation(documents, i, distanceMetric);
+        //     double accuracy = crossValidation(database, i, "man");
         //     System.out.println("k: " + i);
         //     System.out.println("Accuracy: " + accuracy + "%");
         // }
         
-        // customizable
-        String distanceMetric = "ncd"; // "cos" for cosine, "euc" for euclidean, "ncd" for normalized compression distance
-        int k = 6; // must be 0 < k < 10
+    // Input sample here        
+        String test_document = "";
+        // String filepath = ""
+        
+        // String test_document = preprocessData(test_document_path, stopword_path);
+            
 
-        // Path to stopwords.txt
-        String stopword_path = "/Users/.../hw4/stopwords.txt";
+            
+        kNN kNN = new kNN(database);
+       
+        // var test_label_document = kNN.classifyDocument(test_document, k, distanceMetric);
+        // System.out.println("label: " + test_label_document + " (" + getCategory(test_label_document) + ")");
 
-        // Classifies test document, path to test document
-        String test_document_path = "/Users/.../data/unknown01.txt";
-
-        String test_document = preprocessData(test_document_path, stopword_path);
-        kNN kNN = new kNN(documents);
-        var test_label = kNN.classifyDocument(test_document, k, distanceMetric);
-        System.out.println("label: " + test_label + " (" + getCategory(test_label) + ")");
+        var fuzzyResult = kNN.fuzzyClassifyDocument(test_document, k, distanceMetric);
+        printFuzzy(fuzzyResult);
     }
 }

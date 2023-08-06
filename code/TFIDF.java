@@ -6,14 +6,14 @@ public class TFIDF {
     private double[][] tfidfMatrix;
     private Map<String, Integer> docFreq;
 
-    public TFIDF(List<docLabel> documents, boolean logAddOne) {
+    public TFIDF(List<docLabel> documents) {
         this.documents = documents;
         this.conceptWords = createConceptWords(documents);
-        this.tfidfMatrix = makeMatrix(logAddOne);
+        this.tfidfMatrix = makeMatrix();
     }
 
 
-    private double[][] makeMatrix(boolean logAddOne) {
+    private double[][] makeMatrix() {
         var res = new double[documents.size()][conceptWords.size()];        
         // Calculate document frequency for each concept word
         docFreq = new HashMap<>();
