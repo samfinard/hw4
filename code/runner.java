@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.io.FileWriter;
+
 
 public class runner {
     public static List<docLabel> readDocumentsFromFolder(String folderPath) {
@@ -113,7 +118,12 @@ public class runner {
     
         return (double) score / totalTests * 100; // Calculate and return accuracy
     }
-    
+    // public static String preprocessData(String filePath, String stopWordPath){
+    //     preprocessing.stopWordDoc(stopWordPath);
+    //     List<String> fileStrings = preprocessing.reader(filePath);
+    //     String outputString = String.join(" ", fileStrings);
+    //     return outputString;
+    // }
     public static void main(String[] args) {
         List<docLabel> documents = readDocumentsFromFolder("../data/processed");
         
