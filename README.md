@@ -1,14 +1,13 @@
 # hw4: Implementing KNN to cluster text document
 
-
 Sam Finard, Derek Gubbens
-
 
 **How to Run**
 
-Open runner.java and in the main method change test_document_path to the filepath of the document you want to classify, and change stopword_path to the filepath of stopwords.txt on you computer. Change k and the distance metric to whatever you want.
-
-You will need to have the files for Stanford CoreNLP 4.5.4 (used on the previous homework) on your computer in the same directory as the project. Since we worked on this project over github, we are unable to upload the folder containing all the CoreNLP files to our project as some of the file sizes are too large. This is required in order for the preprocessing to work.
+Run runner.java through the command line. You need three arguments in the following order.
+1. distance metric - either cos, euc, ncd, or man. ncd is normalized compressed distance and further explained at the bottom. man is manhattan distance.
+2. what k value you want - should be from 1,...,9
+3. filepath of sample document you want to test
 
 **Preprocessing and vectorization**
 
@@ -32,7 +31,7 @@ To evaluate the performance of our classifier, we used 10-fold cross-validation 
 ![performance_bar_graph_no_avg](https://github.com/samfinard/hw4/assets/104854051/adabcfef-e099-47b8-845e-b542ebac75e1)
 Our baseline metric is 33% accuracy because that's the probability of randomly guessing 1 out of the 3 categories correctly.
 
-NCD stands for normalized compressed distance, which I learned about in ["“Low-Resource” Text Classification: A Parameter-Free Classification Method with Compressors"](https://aclanthology.org/2023.findings-acl.426/) which claims to outperform BERT using GZIP and kNN (just like in this homework).
+I learned about normalized compressed distance (ncd) from ["“Low-Resource” Text Classification: A Parameter-Free Classification Method with Compressors"](https://aclanthology.org/2023.findings-acl.426/) which claims to outperform BERT using GZIP and kNN (just like in this homework).
 
 NCD(x,y) returns a distance measure between string x and y from [0,1] where similar strings return a low number.
 - Let C(x) be the number of bytes of the GZIP compressed version of x
@@ -40,3 +39,15 @@ NCD(x,y) returns a distance measure between string x and y from [0,1] where simi
 - where xy is the string concatenation x + y
 
 This implementation is found in similarity.java
+
+**Fuzzy kNN**
+A non-fuzzy kNN classifier can be broken up into 2 sections.
+1. retrieve the top k documents according to the distance measure.
+2. Within those top k documents, get the frequency of each label and return the most frequent label.
+
+To make it fuzzy, step 1 remains unchanged and we modify step 2
+2. Within those top k documents, calculate the frequency of each label and return that frequency list in sorted descending order.
+
+We normalized the frequency list to be percentages with two decimals of precision.
+
+
