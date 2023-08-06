@@ -143,16 +143,10 @@ public class runner {
             var c = entry.getKey();
             var category = getCategory(entry.getKey());
             var percent = entry.getValue();
-            System.out.println(c + " (" + category + "): " + percent + "%");
+            System.out.printf(c + " (" + category + "):" + "%.2f%%" + "\n", percent);
         }
     }
     public static void main(String[] args) {
-        List<docLabel> database = readDocumentsFromFolder("../data/processed");
-
-// "cos" for cosine, "euc" for euclidean, "ncd" for normalized compression distance, "man" for manhattan
-        String distanceMetric = "euc"; 
-        int k = 6; // must be 0 < k < 10
-
 // Get performance % for each k
         
         // for (int i = 1; i < 10; i++) {
@@ -162,18 +156,18 @@ public class runner {
         // }
         
     // Input sample here        
-        String test_document = "";
+        List<docLabel> database = readDocumentsFromFolder("../data/processed");
+
+// "cos" for cosine, "euc" for euclidean, "ncd" for normalized compression distance, "man" for manhattan
+        String distanceMetric = "euc"; 
+        int k = 6; // must be 0 < k < 10
+    
         // String filepath = ""
-        
         // String test_document = preprocessData(test_document_path, stopword_path);
-            
-
-            
         kNN kNN = new kNN(database);
-       
-        // var test_label_document = kNN.classifyDocument(test_document, k, distanceMetric);
-        // System.out.println("label: " + test_label_document + " (" + getCategory(test_label_document) + ")");
-
+        
+        String test_document = "";
+        String filepath = "";
         var fuzzyResult = kNN.fuzzyClassifyDocument(test_document, k, distanceMetric);
         printFuzzy(fuzzyResult);
     }

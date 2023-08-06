@@ -73,10 +73,9 @@ public class kNN {
         }
         return labelFrequency;
     }
-    public String classifyDocument(String unknownDoc, int k, String distanceMetric) { // e c    n
+    public String classifyDocument(String unknownDoc, int k, String distanceMetric) {
       var topKDocs = getTopKDist(unknownDoc, k, distanceMetric);
       var mostFreqLabel = getMostFrequentClass(topKDocs);
       return mostFreqLabel;
     }
-
 }
