@@ -50,4 +50,5 @@ To make it fuzzy, step 1 remains unchanged and we modify step 2
 
 We normalized the frequency list to be percentages with two decimals of precision.
 
+![confusionMatrix](https://github.com/samfinard/hw4/assets/104854051/98811536-17ce-41e0-8a56-3e7ae141e8db)
 
