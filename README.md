@@ -25,6 +25,8 @@ NCD(x,y) returns a distance measure between string x and y from [0,1] where simi
 
 This implementation is found in similarity.java
 
+Our classifier performed about the same for all distance metrics except manhattan, which was notably less. NCD was the best distance metric, narrowly beating cosine. This is interesting because NCD doesn't require any TF-IDF vectorization whereas cosine (and all other distance metrics) do.
+
 ![confusionMatrix](https://github.com/samfinard/hw4/assets/104854051/98811536-17ce-41e0-8a56-3e7ae141e8db)
 
 **Fuzzy kNN**
