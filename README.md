@@ -9,12 +9,14 @@ To vectorize documents, we used the TF-IDF matrix from hw3. This is an n x d mat
 Note: we set IDF to log((n + 1) / document frequency) instead of the textbook definition log(n / document frequency) because the +1 ensures words that appear in all documents don't have a weight of 0  and also so we avoid division by zero when computing TF-IDF, as well as [other benefits.](https://stats.stackexchange.com/questions/166812/why-add-one-in-inverse-document-frequency)
 
 **kNN classifier**
+
 Our kNN classifier takes three inputs: k, the distance metric, and the target document. It uses the existing 10 documents as a database to classify new documents.
 - k is the number of documents most similar to the target document the algorithm should consider.
 - the distance metric is used to calculate this similarity. We have three possible inputs - euclidean, cosine, and NCD. More about NCD at the bottom
 - the target document is a string that we want to classify as either C1, C4, or C7.
 
 **Performance**
+
 To evaluate the performance of our classifier, we used 10-fold cross-validation on all 27 combinations of k=1,...,9, and our three possible distance metrics. Our model performed its best at k=1 using NCD, although all distance metrics perform about the same with k=6 or higher. 
 
 
