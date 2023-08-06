@@ -25,8 +25,8 @@ To evaluate the performance of our classifier, we used 10-fold cross-validation 
 NCD stands for normalized compressed distance, which I learned about in [this paper](https://aclanthology.org/2023.findings-acl.426/) which claims to outperform BERT with a parameter-free classification method (they used GZIP + kNN just like in this homework).
 
 NCD(x,y) returns a distance measure between string x and y from [0,1] where similar strings return a low number.
-- Let $$C(x)$$ be the number of bytes of the GZIP compressed version of x
-- NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))
+- Let C(x) be the number of bytes of the GZIP compressed version of x
+  $$NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))$$
 - where xy is the string concatenation x + y
 
 This implementation is found in similarity.java
