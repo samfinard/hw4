@@ -1,5 +1,9 @@
 # hw4: Implementing KNN to cluster text document
 
+
+Sam Finard, Derek Gubbens
+
+
 **How to Run**
 
 Open runner.java and in the main method change test_document_path to the filepath of the document you want to classify, and change stopword_path to the filepath of stopwords.txt on you computer. Change k and the distance metric to whatever you want.
