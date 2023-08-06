@@ -26,7 +26,7 @@ NCD stands for normalized compressed distance, which I learned about in [this pa
 
 NCD(x,y) returns a distance measure between string x and y from [0,1] where similar strings return a low number.
 - Let C(x) be the number of bytes of the GZIP compressed version of x
-  $$NCD(x,y) = (C(xy) - \min(C(x),C(y))) / \max(C(x),C(y))$$
+  $$NCD(x,y) = \dfrac{C(xy) - \min(C(x),C(y))}{\max(C(x),C(y)}$$
 - where xy is the string concatenation x + y
 
 This implementation is found in similarity.java
