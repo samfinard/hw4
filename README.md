@@ -34,4 +34,4 @@ This implementation is found in similarity.java
 github link
 
 **How to Run**
-Open runner.java and change filePath (whatever u named it) to the filepath to the location of the document on your computer, and change stopWordPath to the filepath to the location of stopwords.txt on your computer.
+Open runner.java and change filePath (whatever u named it) to the filepath of the document you want to classify. Change k and the distance metric to whatever you want.
