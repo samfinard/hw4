@@ -129,6 +129,14 @@ public class runner {
     //     return outputString;
     // }
 
+    private static String getStringFromFilePath(String filepath) {
+        try {
+            return new String(Files.readAllBytes(new File(filepath).toPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     private static void printFuzzy(Map<String, Double> fuzzyResult) {
         Map<String, Double> sortedFuzzyRes = fuzzyResult.entrySet()
         .stream()
@@ -147,28 +155,46 @@ public class runner {
         }
     }
     public static void main(String[] args) {
-// Get performance % for each k
-        
+        List<docLabel> database = readDocumentsFromFolder("../data/processed");
+
+        // Get performance % for each k
+
         // for (int i = 1; i < 10; i++) {
         //     double accuracy = crossValidation(database, i, "man");
         //     System.out.println("k: " + i);
         //     System.out.println("Accuracy: " + accuracy + "%");
         // }
         
-    // Input sample here        
-        List<docLabel> database = readDocumentsFromFolder("../data/processed");
 
 // "cos" for cosine, "euc" for euclidean, "ncd" for normalized compression distance, "man" for manhattan
-        String distanceMetric = "euc"; 
-        int k = 6; // must be 0 < k < 10
-    
-        // String filepath = ""
-        // String test_document = preprocessData(test_document_path, stopword_path);
         kNN kNN = new kNN(database);
+
+        // args = new String[]{"cos", "3", "../data/test1.txt"};
+
+        String distanceMetric = args[0];
+        int k = Integer.parseInt(args[1]);
+        String filepath = args[2];
+
+        if (k < 1 || k > 9) {
+            System.out.println("Invalid k value");
+            System.exit(1);
+        }
         
-        String test_document = "";
-        String filepath = "";
-        var fuzzyResult = kNN.fuzzyClassifyDocument(test_document, k, distanceMetric);
-        printFuzzy(fuzzyResult);
+        var test_data = getStringFromFilePath(filepath);
+        if (test_data == null) {
+            System.out.println("File not found");
+            System.exit(1);
+        }
+
+        if (!(distanceMetric.equals("man") || 
+        distanceMetric.equals("cos") || 
+        distanceMetric.equals("euc") || 
+        distanceMetric.equals("ncd"))) {
+            System.out.println("Invalid distance metric. expected man, cos, euc, or ncd.");
+            System.exit(1);
+        }
+
+        var test_result= kNN.fuzzyClassifyDocument(test_data, k, distanceMetric);
+        printFuzzy(test_result);
     }
 }

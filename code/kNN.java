@@ -62,7 +62,8 @@ public class kNN {
         Map<String, Double> labelFrequency = new HashMap<>();
         double sum = 0;
         for (docLabel doc : topKDocs) {
-            if (doc.distance == 0) zero_dist++;
+            if (doc.distance == 0)
+                zero_dist++;
             double frequency = 1.0 / doc.distance;
             labelFrequency.put(doc.label, labelFrequency.getOrDefault(doc.label, 0.0) + frequency);
             sum += frequency;
