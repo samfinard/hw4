@@ -255,17 +255,17 @@ public class runner {
         int k = Integer.parseInt(args[1]);
         String filepath = args[2];
 
-        // Get performance % for each k given a distanceMetric - doesn't classify your document
+        // Get performance from cross validation on database per k value - not reliant on input document
         System.out.println("Printing accuracy per k value...");
         printPerformance(database, distanceMetric);
 
-        // Confusion Matrix is generated from cross-validation, not classifying your document
+        // Confusion Matrix is generated from cross validation
         String[] classNames = {"C1","C4","C7"};
         System.out.println("Confusion Matrix using " + distanceMetric);
         printConfusionMatrix(confusionMatrix, classNames);
         printConfusionMetrics(confusionMatrix);
 
-        // Classify your document
+        // Fuzzy classification of your document
         System.out.println("\nClassifying your document...");
         testValidInput(k, distanceMetric, filepath);
         var test_data = getStringFromFilePath(filepath);
