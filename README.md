@@ -1,6 +1,6 @@
 # Implementing kNN to classify test document and test distance metrics
 
-Sam Finard, Derek Gubbens
+Sam Finard
 
 **How to Run**
 
